@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ChefBot — AI Recipe Agent by IBM Watsonx</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍳</text></svg>" />
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet"/>
+  <style>
+    /* ─── CSS Variables ─────────────────────────────────────────────────────── */
+    :root {
+      --primary:       #f97316;
+      --primary-dark:  #ea580c;
+      --primary-glow:  rgba(249,115,22,0.18);
+      --surface:       #1a1a2e;
+      --surface-2:     #16213e;
+      --surface-3:     #0f3460;
+      --card-bg:       #1e1e30;
+      --card-border:   rgba(255,255,255,0.08);
+      --text-main:     #f1f5f9;
+      --text-muted:    #94a3b8;
+      --success:       #22c55e;
+      --warning:       #eab308;
+      --danger:        #ef4444;
+      --radius:        14px;
+      --radius-sm:     8px;
+      --shadow:        0 8px 32px rgba(0,0,0,0.4);
+      --transition:    0.22s cubic-bezier(.4,0,.2,1);
+    }
+    [data-theme="light"] {
+      --surface:    #fafafa;
+      --surface-2:  #f0f0f0;
+      --surface-3:  #e8e8e8;
+      --card-bg:    #ffffff;
+      --card-border:rgba(0,0,0,0.1);
+      --text-main:  #1a1a2e;
+      --text-muted: #64748b;
+    }
+
+    /* ─── Base ──────────────────────────────────────────────────────────────── */
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--surface);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ─── Scrollbar ─────────────────────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
+
+    /* ─── Navbar ────────────────────────────────────────────────────────────── */
+    .navbar-brand .brand-text { font-family: 'Playfair Display', serif; font-size: 1.4rem; }
+    .navbar { border-bottom: 1px solid var(--card-border); backdrop-filter: blur(12px); }
+    .ibm-badge {
+      background: linear-gradient(135deg, #0f62fe, #4589ff);
+      color: #fff; border-radius: 6px; font-size: 0.68rem;
+      padding: 2px 7px; letter-spacing: .05em; font-weight: 600;
+    }
+
+    /* ─── Sidebar ───────────────────────────────────────────────────────────── */
+    .sidebar {
+      width: 300px; min-width: 300px;
+      background: var(--surface-2);
+      border-right: 1px solid var(--card-border);
+      height: calc(100vh - 60px);
+      overflow-y: auto;
+      position: sticky; top: 60px;
+      padding: 1.25rem;
+      flex-shrink: 0;
+    }
+    .sidebar-section { margin-bottom: 1.5rem; }
+    .sidebar-title {
+      font-size: .72rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .1em; color: var(--text-muted); margin-bottom: .75rem;
+    }
+
+    /* ─── Ingredient Tags ───────────────────────────────────────────────────── */
+    .ingredient-tag {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: var(--primary-glow); border: 1px solid var(--primary);
+      color: var(--primary); border-radius: 20px;
+      padding: 3px 10px 3px 10px; font-size: .8rem; margin: 3px;
+      cursor: default; transition: var(--transition);
+      animation: tagPop .2s ease;
+    }
+    @keyframes tagPop {
+      from { transform: scale(0.7); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
+    .ingredient-tag .remove-tag {
+      cursor: pointer; opacity: .6; font-size: .9rem; line-height:1;
+      padding: 0 2px; border-radius: 50%;
+    }
+    .ingredient-tag .remove-tag:hover { opacity: 1; color: var(--danger); }
+    #ingredientInput {
+      background: var(--card-bg); border: 1px solid var(--card-border);
+      color: var(--text-main); border-radius: var(--radius-sm);
+      font-size: .9rem;
+    }
+    #ingredientInput:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
+    #pantryTags { min-height: 40px; }
+
+    /* ─── Dietary Toggles ───────────────────────────────────────────────────── */
+    .diet-btn {
+      border: 1px solid var(--card-border); background: var(--card-bg);
+      color: var(--text-muted); border-radius: 20px; padding: 4px 12px;
+      font-size: .8rem; cursor: pointer; transition: var(--transition);
+    }
+    .diet-btn:hover, .diet-btn.active {
+      border-color: var(--primary); background: var(--primary-glow);
+      color: var(--primary);
+    }
+
+    /* ─── Main Content ──────────────────────────────────────────────────────── */
+    .main-area {
+      flex: 1; height: calc(100vh - 60px);
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+    .tabs-bar {
+      background: var(--surface-2); border-bottom: 1px solid var(--card-border);
+      padding: .5rem 1rem;
+    }
+    .tab-btn {
+      background: transparent; border: none; color: var(--text-muted);
+      padding: .4rem .85rem; border-radius: var(--radius-sm);
+      font-size: .88rem; font-weight: 500; cursor: pointer;
+      transition: var(--transition);
+    }
+    .tab-btn.active, .tab-btn:hover {
+      background: var(--primary-glow); color: var(--primary);
+    }
+
+    /* ─── Chat Panel ────────────────────────────────────────────────────────── */
+    #chatPanel { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    .chat-messages {
+      flex: 1; overflow-y: auto; padding: 1.25rem;
+      display: flex; flex-direction: column; gap: .85rem;
+    }
+    .msg-row { display: flex; gap: .75rem; max-width: 85%; }
+    .msg-row.user-row { align-self: flex-end; flex-direction: row-reverse; }
+    .msg-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; flex-shrink: 0;
+      background: var(--surface-3);
+    }
+    .msg-avatar.bot-av { background: linear-gradient(135deg, var(--primary), #fb923c); }
+    .msg-bubble {
+      background: var(--card-bg); border: 1px solid var(--card-border);
+      border-radius: var(--radius); padding: .7rem 1rem;
+      font-size: .9rem; line-height: 1.65;
+    }
+    .user-row .msg-bubble {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #fff; border-color: transparent;
+    }
+    .msg-bubble pre { white-space: pre-wrap; font-size: .85rem; margin: .5rem 0 0; }
+    .msg-bubble h4 { font-size: 1rem; margin-bottom: .4rem; color: var(--primary); }
+    .msg-bubble ul { padding-left: 1.2rem; margin: .4rem 0; }
+    .msg-bubble ol { padding-left: 1.5rem; margin: .4rem 0; }
+    .msg-bubble strong { color: var(--primary); }
+    .msg-time { font-size: .7rem; color: var(--text-muted); margin-top: .3rem; text-align: right; }
+
+    /* ─── Typing Indicator ──────────────────────────────────────────────────── */
+    .typing-dots { display: flex; align-items: center; gap: 4px; padding: .2rem 0; }
+    .typing-dots span {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--primary); display: inline-block;
+      animation: bounce 1.2s infinite;
+    }
+    .typing-dots span:nth-child(2) { animation-delay: .2s; }
+    .typing-dots span:nth-child(3) { animation-delay: .4s; }
+    @keyframes bounce {
+      0%,80%,100% { transform: translateY(0); }
+      40% { transform: translateY(-6px); }
+    }
+
+    /* ─── Chat Input ────────────────────────────────────────────────────────── */
+    .chat-input-area {
+      border-top: 1px solid var(--card-border);
+      background: var(--surface-2); padding: .85rem 1.25rem;
+    }
+    .chat-input-area textarea {
+      background: var(--card-bg); border: 1px solid var(--card-border);
+      color: var(--text-main); border-radius: var(--radius);
+      resize: none; font-size: .92rem;
+      transition: var(--transition);
+    }
+    .chat-input-area textarea:focus {
+      border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow);
+      outline: none;
+    }
+    .send-btn {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border: none; color: #fff; width: 44px; height: 44px;
+      border-radius: var(--radius-sm); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; transition: var(--transition); flex-shrink: 0;
+    }
+    .send-btn:hover { transform: scale(1.07); }
+    .send-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+    /* ─── Recommend Panel ───────────────────────────────────────────────────── */
+    #recommendPanel { flex: 1; overflow-y: auto; padding: 1.25rem; }
+    .recipe-card {
+      background: var(--card-bg); border: 1px solid var(--card-border);
+      border-radius: var(--radius); padding: 1.1rem;
+      transition: var(--transition); cursor: pointer;
+      position: relative; overflow: hidden;
+    }
+    .recipe-card::before {
+      content: ''; position: absolute; top: 0; left: 0;
+      height: 3px; width: 0; background: var(--primary);
+      transition: width var(--transition);
+    }
+    .recipe-card:hover::before { width: 100%; }
+    .recipe-card:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: var(--shadow); }
+    .recipe-emoji { font-size: 2.4rem; }
+    .recipe-match {
+      position: absolute; top: .8rem; right: .8rem;
+      background: var(--primary-glow); color: var(--primary);
+      font-size: .75rem; font-weight: 700; border-radius: 12px;
+      padding: 2px 8px;
+    }
+    .recipe-badge {
+      background: var(--surface-3); color: var(--text-muted);
+      border-radius: 6px; padding: 2px 7px; font-size: .73rem; font-weight: 500;
+    }
+    .diet-tag {
+      background: rgba(34,197,94,.12); color: #22c55e;
+      border-radius: 6px; padding: 2px 7px; font-size: .73rem; font-weight: 500;
+    }
+    .ingredient-bar {
+      background: var(--surface-3); border-radius: 4px;
+      height: 5px; width: 100%; margin-top: .4rem;
+    }
+    .ingredient-bar-fill {
+      background: linear-gradient(90deg, var(--success), var(--primary));
+      border-radius: 4px; height: 100%; transition: width .5s ease;
+    }
+
+    /* ─── Recipe Detail Panel ───────────────────────────────────────────────── */
+    #detailPanel { flex: 1; overflow-y: auto; padding: 1.5rem; }
+    .step-card {
+      display: flex; gap: 1rem; padding: .85rem;
+      background: var(--card-bg); border: 1px solid var(--card-border);
+      border-radius: var(--radius-sm); margin-bottom: .6rem;
+      transition: var(--transition);
+    }
+    .step-card:hover { border-color: var(--primary); }
+    .step-num {
+      min-width: 32px; height: 32px;
+      background: var(--primary-glow); color: var(--primary);
+      border-radius: 50%; display: flex; align-items: center;
+      justify-content: center; font-weight: 700; font-size: .9rem; flex-shrink: 0;
+    }
+    .tip-card {
+      background: rgba(249,115,22,.07); border-left: 3px solid var(--primary);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      padding: .7rem 1rem; margin-bottom: .5rem; font-size: .9rem;
+    }
+    .substitution-row {
+      background: var(--card-bg); border: 1px solid var(--card-border);
+      border-radius: var(--radius-sm); padding: .65rem 1rem;
+      margin-bottom: .4rem; font-size: .88rem;
+    }
+    .stat-box {
+      background: var(--card-bg); border: 1px solid var(--card-border);
+      border-radius: var(--radius-sm); padding: .8rem 1rem;
+      text-align: center;
+    }
+    .stat-box .stat-val { font-size: 1.35rem; font-weight: 700; color: var(--primary); }
+    .stat-box .stat-lbl { font-size: .75rem; color: var(--text-muted); }
+
+    /* ─── Substitution Panel ────────────────────────────────────────────────── */
+    #subPanel { flex: 1; overflow-y: auto; padding: 1.25rem; }
+
+    /* ─── Favorites Panel ───────────────────────────────────────────────────── */
+    #favPanel { flex: 1; overflow-y: auto; padding: 1.25rem; }
+
+    /* ─── Empty States ──────────────────────────────────────────────────────── */
+    .empty-state {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; height: 60%; gap: 1rem; color: var(--text-muted);
+      text-align: center;
+    }
+    .empty-state .icon { font-size: 3.5rem; opacity: .4; }
+
+    /* ─── Misc ──────────────────────────────────────────────────────────────── */
+    .btn-primary-custom {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border: none; color: #fff; border-radius: var(--radius-sm);
+      padding: .45rem 1rem; font-size: .9rem; font-weight: 500;
+      cursor: pointer; transition: var(--transition);
+    }
+    .btn-primary-custom:hover { opacity: .9; transform: translateY(-1px); }
+    .btn-outline-custom {
+      background: transparent; border: 1px solid var(--primary);
+      color: var(--primary); border-radius: var(--radius-sm);
+      padding: .45rem 1rem; font-size: .9rem; font-weight: 500;
+      cursor: pointer; transition: var(--transition);
+    }
+    .btn-outline-custom:hover { background: var(--primary-glow); }
+    .section-heading {
+      font-family: 'Playfair Display', serif; font-size: 1.3rem;
+      margin-bottom: 1rem; color: var(--text-main);
+    }
+    .quick-prompt {
+      background: var(--card-bg); border: 1px solid var(--card-border);
+      border-radius: var(--radius-sm); padding: .5rem .9rem;
+      font-size: .82rem; color: var(--text-muted); cursor: pointer;
+      transition: var(--transition); display: inline-block; margin: .2rem;
+    }
+    .quick-prompt:hover { border-color: var(--primary); color: var(--primary); }
+    .toast-container { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9999; }
+
+    /* ─── Mobile ────────────────────────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .sidebar.show-mobile {
+        display: block; position: fixed; top: 0; left: 0;
+        height: 100vh; width: 280px; z-index: 1050; padding-top: 70px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══ NAVBAR ════════════════════════════════════════════════════════════ -->
+<nav class="navbar navbar-expand-lg sticky-top px-3" style="background:var(--surface-2);height:60px;">
+  <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+    <span style="font-size:1.6rem;">🍳</span>
+    <span class="brand-text text-white">ChefBot</span>
+    <span class="ibm-badge">IBM Watsonx</span>
+  </a>
+  <div class="ms-auto d-flex align-items-center gap-2">
+    <button class="btn btn-sm btn-outline-secondary" id="themeToggle" title="Toggle theme">
+      <i class="bi bi-moon-stars-fill"></i>
+    </button>
+    <button class="btn btn-sm d-lg-none" style="color:var(--text-main);" id="sidebarToggle">
+      <i class="bi bi-layout-sidebar-inset"></i>
+    </button>
+  </div>
+</nav>
+
+<!-- ═══ MAIN LAYOUT ═══════════════════════════════════════════════════════ -->
+<div class="d-flex" style="height:calc(100vh - 60px)">
+
+  <!-- ─── SIDEBAR ──────────────────────────────────────────────────────── -->
+  <aside class="sidebar" id="sidebar">
+
+    <!-- Pantry -->
+    <div class="sidebar-section">
+      <div class="sidebar-title"><i class="bi bi-basket2-fill me-1"></i> What's in my Pantry</div>
+      <div class="input-group mb-2">
+        <input type="text" id="ingredientInput" class="form-control form-control-sm"
+               placeholder="Add ingredient…" autocomplete="off" />
+        <button class="btn btn-sm btn-primary-custom" id="addIngBtn">
+          <i class="bi bi-plus-lg"></i>
+        </button>
+      </div>
+      <div id="pantryTags" class="mb-2"></div>
+      <!-- Quick add common ingredients -->
+      <div style="margin-bottom:.4rem;">
+        <span class="sidebar-title">Quick Add</span>
+      </div>
+      <div id="quickIngredients">
+        <span class="quick-prompt" data-ing="onion">🧅 Onion</span>
+        <span class="quick-prompt" data-ing="garlic">🧄 Garlic</span>
+        <span class="quick-prompt" data-ing="tomato">🍅 Tomato</span>
+        <span class="quick-prompt" data-ing="potato">🥔 Potato</span>
+        <span class="quick-prompt" data-ing="rice">🍚 Rice</span>
+        <span class="quick-prompt" data-ing="eggs">🥚 Eggs</span>
+        <span class="quick-prompt" data-ing="paneer">🧀 Paneer</span>
+        <span class="quick-prompt" data-ing="chicken">🍗 Chicken</span>
+        <span class="quick-prompt" data-ing="spinach">🥬 Spinach</span>
+        <span class="quick-prompt" data-ing="lentils">🫘 Lentils</span>
+        <span class="quick-prompt" data-ing="milk">🥛 Milk</span>
+        <span class="quick-prompt" data-ing="ginger">🫚 Ginger</span>
+        <span class="quick-prompt" data-ing="cumin">🌿 Cumin</span>
+        <span class="quick-prompt" data-ing="chili">🌶️ Chili</span>
+        <span class="quick-prompt" data-ing="butter">🧈 Butter</span>
+      </div>
+    </div>
+
+    <!-- Dietary Preferences -->
+    <div class="sidebar-section">
+      <div class="sidebar-title"><i class="bi bi-shield-check me-1"></i> Dietary Preferences</div>
+      <div class="d-flex flex-wrap gap-1" id="dietaryBtns">
+        <button class="diet-btn" data-diet="vegetarian">🥗 Vegetarian</button>
+        <button class="diet-btn" data-diet="vegan">🌱 Vegan</button>
+        <button class="diet-btn" data-diet="gluten-free">🌾 Gluten-Free</button>
+        <button class="diet-btn" data-diet="dairy-free">🥛 Dairy-Free</button>
+        <button class="diet-btn" data-diet="nut-free">🥜 Nut-Free</button>
+      </div>
+    </div>
+
+    <!-- Preferences -->
+    <div class="sidebar-section">
+      <div class="sidebar-title"><i class="bi bi-sliders me-1"></i> Preferences</div>
+      <label class="form-label" style="font-size:.82rem;color:var(--text-muted)">
+        Spice Level: <span id="spiceLabel">Medium</span>
+      </label>
+      <input type="range" class="form-range" min="1" max="5" value="3" id="spiceRange" style="accent-color:var(--primary)"/>
+      <label class="form-label mt-2" style="font-size:.82rem;color:var(--text-muted)">
+        Servings: <span id="servingsLabel">2</span>
+      </label>
+      <input type="range" class="form-range" min="1" max="8" value="2" id="servingsRange" style="accent-color:var(--primary)"/>
+    </div>
+
+    <!-- Actions -->
+    <div class="sidebar-section">
+      <button class="btn-primary-custom w-100 mb-2" id="recommendBtn">
+        <i class="bi bi-stars me-1"></i> Get Recommendations
+      </button>
+      <button class="btn-outline-custom w-100" id="clearPantryBtn">
+        <i class="bi bi-trash me-1"></i> Clear Pantry
+      </button>
+    </div>
+
+    <!-- Stats -->
+    <div class="sidebar-section">
+      <div class="sidebar-title"><i class="bi bi-bar-chart-fill me-1"></i> Session Stats</div>
+      <div class="row g-2">
+        <div class="col-6">
+          <div class="stat-box">
+            <div class="stat-val" id="statIngCount">0</div>
+            <div class="stat-lbl">Ingredients</div>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="stat-box">
+            <div class="stat-val" id="statChatCount">0</div>
+            <div class="stat-lbl">Chats</div>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="stat-box">
+            <div class="stat-val" id="statFavCount">0</div>
+            <div class="stat-lbl">Favorites</div>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="stat-box">
+            <div class="stat-val" id="statRecCount">0</div>
+            <div class="stat-lbl">Recipes Found</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ─── MAIN AREA ─────────────────────────────────────────────────────── -->
+  <div class="main-area">
+    <!-- Tabs -->
+    <div class="tabs-bar d-flex gap-1 flex-wrap">
+      <button class="tab-btn active" data-tab="chat"><i class="bi bi-chat-dots me-1"></i>Chat</button>
+      <button class="tab-btn" data-tab="recommend"><i class="bi bi-grid-3x3-gap me-1"></i>Recipes</button>
+      <button class="tab-btn" data-tab="detail"><i class="bi bi-journal-text me-1"></i>Instructions</button>
+      <button class="tab-btn" data-tab="sub"><i class="bi bi-arrow-left-right me-1"></i>Substitutions</button>
+      <button class="tab-btn" data-tab="fav"><i class="bi bi-heart me-1"></i>Favorites</button>
+    </div>
+
+    <!-- ── Chat Panel ─────────────────────────────────────────── -->
+    <div id="chatPanel" class="tab-panel">
+      <div class="chat-messages" id="chatMessages">
+        <!-- Welcome message -->
+        <div class="msg-row">
+          <div class="msg-avatar bot-av">🍳</div>
+          <div>
+            <div class="msg-bubble">
+              <h4>👋 Welcome to ChefBot!</h4>
+              <p>I'm your AI-powered culinary assistant, built on <strong>IBM Watsonx.ai + Granite</strong>.</p>
+              <p>Here's what I can do for you:</p>
+              <ul>
+                <li>📋 Suggest recipes based on your pantry ingredients</li>
+                <li>👨‍🍳 Generate step-by-step cooking instructions</li>
+                <li>🔄 Suggest ingredient substitutions</li>
+                <li>🥗 Adapt recipes for dietary preferences</li>
+                <li>♻️ Help reduce food waste</li>
+              </ul>
+              <p><strong>Start by adding ingredients to your pantry (left panel) or just ask me anything!</strong></p>
+            </div>
+            <div class="msg-time">Now</div>
+          </div>
+        </div>
+        <!-- Quick prompts -->
+        <div style="padding: .5rem 0;">
+          <span class="quick-prompt" data-prompt="What can I cook with my current ingredients?">🍽️ What can I cook with these?</span>
+          <span class="quick-prompt" data-prompt="Give me a quick 30-minute dinner recipe">⚡ Quick 30-min dinner</span>
+          <span class="quick-prompt" data-prompt="Suggest a healthy vegetarian meal">🥗 Healthy veg meal</span>
+          <span class="quick-prompt" data-prompt="I want to make something Indian for dinner tonight">🇮🇳 Indian dinner idea</span>
+          <span class="quick-prompt" data-prompt="How do I reduce food waste with my ingredients?">♻️ Reduce food waste</span>
+        </div>
+      </div>
+      <div class="chat-input-area">
+        <div class="d-flex gap-2 align-items-end">
+          <textarea id="chatInput" class="form-control"
+            placeholder="Ask ChefBot anything — 'What can I cook tonight?', 'Make it vegan', 'Substitute for cream'…"
+            rows="2"></textarea>
+          <button class="send-btn" id="sendBtn" title="Send">
+            <i class="bi bi-send-fill"></i>
+          </button>
+        </div>
+        <div class="d-flex gap-2 mt-2 flex-wrap">
+          <span style="font-size:.75rem;color:var(--text-muted)">
+            <i class="bi bi-cpu me-1"></i>IBM Granite &nbsp;|&nbsp;
+            <i class="bi bi-database me-1"></i>ChromaDB RAG &nbsp;|&nbsp;
+            <span id="ingBadge" style="color:var(--primary);font-weight:600;">0 ingredients</span>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Recommend Panel ────────────────────────────────────── -->
+    <div id="recommendPanel" class="tab-panel" style="display:none">
+      <div class="section-heading"><i class="bi bi-stars me-2" style="color:var(--primary)"></i>Recipe Recommendations</div>
+      <div id="recipeGrid" class="row g-3">
+        <div class="empty-state col-12">
+          <div class="icon">🥘</div>
+          <div>Add ingredients to your pantry, then click <strong>Get Recommendations</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Detail Panel ───────────────────────────────────────── -->
+    <div id="detailPanel" class="tab-panel" style="display:none">
+      <div id="detailContent">
+        <div class="empty-state">
+          <div class="icon">📖</div>
+          <div>Select a recipe from the <strong>Recipes</strong> tab to see full instructions</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Substitutions Panel ────────────────────────────────── -->
+    <div id="subPanel" class="tab-panel" style="display:none">
+      <div class="section-heading"><i class="bi bi-arrow-left-right me-2" style="color:var(--primary)"></i>Ingredient Substitutions</div>
+      <div class="mb-3">
+        <div class="input-group">
+          <input type="text" class="form-control" id="subIngInput" placeholder="Enter ingredient to substitute…" style="background:var(--card-bg);border-color:var(--card-border);color:var(--text-main)"/>
+          <input type="text" class="form-control" id="subContextInput" placeholder="Recipe name (optional)" style="background:var(--card-bg);border-color:var(--card-border);color:var(--text-main)"/>
+          <button class="btn-primary-custom px-3" id="subFetchBtn">
+            <i class="bi bi-search me-1"></i>Find Subs
+          </button>
+        </div>
+      </div>
+      <div id="subResults">
+        <div class="empty-state" style="height:auto;padding:2rem">
+          <div class="icon">🔄</div>
+          <div>Search for an ingredient above to get AI-powered substitution suggestions</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Favorites Panel ────────────────────────────────────── -->
+    <div id="favPanel" class="tab-panel" style="display:none">
+      <div class="section-heading"><i class="bi bi-heart-fill me-2" style="color:#ef4444"></i>My Favorites</div>
+      <div id="favGrid" class="row g-3">
+        <div class="empty-state col-12">
+          <div class="icon">💝</div>
+          <div>Save recipes you love by clicking the <strong>♡ Favorite</strong> button on any recipe card</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main-area -->
+</div><!-- /d-flex -->
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Bootstrap 5 JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════
+//  ChefBot — Frontend Application
+// ═══════════════════════════════════════════════════════════════════════════
+
+const STATE = {
+  ingredients: [],
+  dietary: [],
+  spiceLevel: 3,
+  servings: 2,
+  chatCount: 0,
+  favCount: 0,
+  recCount: 0,
+  favorites: JSON.parse(localStorage.getItem('chefbot_favs') || '[]'),
+  history: JSON.parse(localStorage.getItem('chefbot_history') || '[]'),
+  darkMode: true,
+};
+
+const spiceLabels = {1:'Very Mild', 2:'Mild', 3:'Medium', 4:'Spicy', 5:'Very Spicy'};
+
+// ─── DOM refs ─────────────────────────────────────────────────────────────
+const chatMessages   = document.getElementById('chatMessages');
+const chatInput      = document.getElementById('chatInput');
+const sendBtn        = document.getElementById('sendBtn');
+const pantryTags     = document.getElementById('pantryTags');
+const ingredientInput= document.getElementById('ingredientInput');
+const addIngBtn      = document.getElementById('addIngBtn');
+const ingBadge       = document.getElementById('ingBadge');
+const recommendBtn   = document.getElementById('recommendBtn');
+const clearPantryBtn = document.getElementById('clearPantryBtn');
+const recipeGrid     = document.getElementById('recipeGrid');
+const detailContent  = document.getElementById('detailContent');
+const subIngInput    = document.getElementById('subIngInput');
+const subContextInput= document.getElementById('subContextInput');
+const subFetchBtn    = document.getElementById('subFetchBtn');
+const subResults     = document.getElementById('subResults');
+const favGrid        = document.getElementById('favGrid');
+const themeToggle    = document.getElementById('themeToggle');
+const sidebarToggle  = document.getElementById('sidebarToggle');
+const sidebar        = document.getElementById('sidebar');
+
+// ─── Tabs ─────────────────────────────────────────────────────────────────
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const tab = btn.dataset.tab;
+    document.querySelectorAll('.tab-panel').forEach(p => p.style.display = 'none');
+    document.getElementById(tab + 'Panel').style.display = '';
+    if (tab === 'fav') renderFavorites();
+  });
+});
+
+// ─── Theme Toggle ─────────────────────────────────────────────────────────
+themeToggle.addEventListener('click', () => {
+  STATE.darkMode = !STATE.darkMode;
+  document.documentElement.setAttribute('data-bs-theme', STATE.darkMode ? 'dark' : 'light');
+  document.documentElement.setAttribute('data-theme', STATE.darkMode ? 'dark' : 'light');
+  themeToggle.innerHTML = STATE.darkMode
+    ? '<i class="bi bi-moon-stars-fill"></i>'
+    : '<i class="bi bi-sun-fill"></i>';
+});
+
+// ─── Sidebar mobile ───────────────────────────────────────────────────────
+sidebarToggle.addEventListener('click', () => sidebar.classList.toggle('show-mobile'));
+document.addEventListener('click', e => {
+  if (!sidebar.contains(e.target) && !sidebarToggle.contains(e.target))
+    sidebar.classList.remove('show-mobile');
+});
+
+// ─── Ingredient Management ─────────────────────────────────────────────────
+function addIngredient(name) {
+  name = name.trim().toLowerCase();
+  if (!name || STATE.ingredients.includes(name)) return;
+  STATE.ingredients.push(name);
+  renderPantry();
+  updateStats();
+}
+
+function removeIngredient(name) {
+  STATE.ingredients = STATE.ingredients.filter(i => i !== name);
+  renderPantry();
+  updateStats();
+}
+
+function renderPantry() {
+  pantryTags.innerHTML = '';
+  STATE.ingredients.forEach(ing => {
+    const tag = document.createElement('span');
+    tag.className = 'ingredient-tag';
+    tag.innerHTML = `${ing}<span class="remove-tag" data-ing="${ing}">×</span>`;
+    pantryTags.appendChild(tag);
+  });
+  ingBadge.textContent = STATE.ingredients.length + ' ingredient' + (STATE.ingredients.length !== 1 ? 's' : '');
+  document.getElementById('statIngCount').textContent = STATE.ingredients.length;
+}
+
+pantryTags.addEventListener('click', e => {
+  const t = e.target.closest('.remove-tag');
+  if (t) removeIngredient(t.dataset.ing);
+});
+
+addIngBtn.addEventListener('click', () => {
+  addIngredient(ingredientInput.value);
+  ingredientInput.value = '';
+});
+
+ingredientInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ',') {
+    e.preventDefault();
+    addIngredient(ingredientInput.value.replace(',', ''));
+    ingredientInput.value = '';
+  }
+});
+
+clearPantryBtn.addEventListener('click', () => {
+  STATE.ingredients = [];
+  renderPantry();
+  updateStats();
+  showToast('Pantry cleared', 'secondary');
+});
+
+// Quick add ingredients
+document.getElementById('quickIngredients').addEventListener('click', e => {
+  const t = e.target.closest('[data-ing]');
+  if (t) addIngredient(t.dataset.ing);
+});
+
+// ─── Dietary Buttons ──────────────────────────────────────────────────────
+document.getElementById('dietaryBtns').addEventListener('click', e => {
+  const btn = e.target.closest('.diet-btn');
+  if (!btn) return;
+  btn.classList.toggle('active');
+  const diet = btn.dataset.diet;
+  if (STATE.dietary.includes(diet)) {
+    STATE.dietary = STATE.dietary.filter(d => d !== diet);
+  } else {
+    STATE.dietary.push(diet);
+  }
+});
+
+// ─── Sliders ──────────────────────────────────────────────────────────────
+document.getElementById('spiceRange').addEventListener('input', e => {
+  STATE.spiceLevel = +e.target.value;
+  document.getElementById('spiceLabel').textContent = spiceLabels[STATE.spiceLevel];
+});
+document.getElementById('servingsRange').addEventListener('input', e => {
+  STATE.servings = +e.target.value;
+  document.getElementById('servingsLabel').textContent = STATE.servings;
+});
+
+// ─── Chat ─────────────────────────────────────────────────────────────────
+function appendMessage(role, text, time) {
+  const row = document.createElement('div');
+  row.className = 'msg-row' + (role === 'user' ? ' user-row' : '');
+  const avatar = document.createElement('div');
+  avatar.className = 'msg-avatar' + (role === 'bot' ? ' bot-av' : '');
+  avatar.textContent = role === 'bot' ? '🍳' : '👤';
+  const bubble = document.createElement('div');
+  bubble.innerHTML = `<div class="msg-bubble">${formatMessage(text)}</div>
+    <div class="msg-time">${time || formatTime()}</div>`;
+  row.appendChild(avatar);
+  row.appendChild(bubble);
+  chatMessages.appendChild(row);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+  return row;
+}
+
+function showTyping() {
+  const row = document.createElement('div');
+  row.className = 'msg-row';
+  row.id = 'typingRow';
+  row.innerHTML = `<div class="msg-avatar bot-av">🍳</div>
+    <div class="msg-bubble">
+      <div class="typing-dots"><span></span><span></span><span></span></div>
+    </div>`;
+  chatMessages.appendChild(row);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function removeTyping() {
+  const t = document.getElementById('typingRow');
+  if (t) t.remove();
+}
+
+function formatMessage(text) {
+  // Convert markdown-like syntax to HTML
+  return text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    .replace(/^## (.*$)/gm, '<h4>$1</h4>')
+    .replace(/^### (.*$)/gm, '<strong>$1</strong>')
+    .replace(/^(\d+)\. (.*$)/gm, '<li>$2</li>')
+    .replace(/^[-•] (.*$)/gm, '<li>$1</li>')
+    .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
+    .replace(/\n\n/g, '<br><br>')
+    .replace(/\n/g, '<br>');
+}
+
+function formatTime() {
+  return new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+}
+
+async function sendMessage() {
+  const text = chatInput.value.trim();
+  if (!text || sendBtn.disabled) return;
+  chatInput.value = '';
+  appendMessage('user', text);
+  sendBtn.disabled = true;
+  showTyping();
+  STATE.chatCount++;
+  updateStats();
+
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        message: text,
+        ingredients: STATE.ingredients,
+        dietary: STATE.dietary,
+        preferences: {
+          spice_level: spiceLabels[STATE.spiceLevel],
+          servings: STATE.servings,
+        }
+      })
+    });
+    const data = await res.json();
+    removeTyping();
+    if (data.error) {
+      appendMessage('bot', '⚠️ ' + data.error);
+    } else {
+      appendMessage('bot', data.response);
+      // If recipes were retrieved, update recommendation tab
+      if (data.retrieved_recipes && data.retrieved_recipes.length > 0) {
+        renderRecipeGrid(data.retrieved_recipes, recipeGrid);
+        STATE.recCount = data.retrieved_recipes.length;
+        updateStats();
+      }
+    }
+    // Save to history
+    STATE.history.push({role:'user', text, time: formatTime()});
+    STATE.history.push({role:'bot', text: data.response, time: formatTime()});
+    if (STATE.history.length > 100) STATE.history = STATE.history.slice(-100);
+    localStorage.setItem('chefbot_history', JSON.stringify(STATE.history));
+  } catch (err) {
+    removeTyping();
+    appendMessage('bot', '⚠️ Could not reach the server. Make sure Flask is running.');
+  } finally {
+    sendBtn.disabled = false;
+    chatInput.focus();
+  }
+}
+
+sendBtn.addEventListener('click', sendMessage);
+chatInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+});
+
+// Quick prompts in chat
+chatMessages.addEventListener('click', e => {
+  const t = e.target.closest('[data-prompt]');
+  if (t) {
+    chatInput.value = t.dataset.prompt;
+    sendMessage();
+  }
+});
+
+// ─── Recommendations ──────────────────────────────────────────────────────
+recommendBtn.addEventListener('click', async () => {
+  if (STATE.ingredients.length === 0) {
+    showToast('Add ingredients first!', 'warning');
+    return;
+  }
+  // Switch to recommend tab
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('[data-tab="recommend"]').classList.add('active');
+  document.querySelectorAll('.tab-panel').forEach(p => p.style.display = 'none');
+  document.getElementById('recommendPanel').style.display = '';
+
+  recipeGrid.innerHTML = '<div class="col-12 text-center py-4"><div class="typing-dots" style="justify-content:center"><span></span><span></span><span></span></div><p class="mt-2" style="color:var(--text-muted)">Finding recipes…</p></div>';
+
+  try {
+    const res = await fetch('/api/recommend', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ingredients: STATE.ingredients, dietary: STATE.dietary})
+    });
+    const data = await res.json();
+    if (data.error) {
+      recipeGrid.innerHTML = `<div class="col-12"><div class="alert alert-danger">${data.error}</div></div>`;
+    } else {
+      renderRecipeGrid(data.recipes, recipeGrid);
+      STATE.recCount = data.recipes.length;
+      updateStats();
+    }
+  } catch (err) {
+    recipeGrid.innerHTML = `<div class="col-12"><div class="alert alert-danger">Server error. Is Flask running?</div></div>`;
+  }
+});
+
+function renderRecipeGrid(recipes, container) {
+  if (!recipes || recipes.length === 0) {
+    container.innerHTML = `<div class="empty-state col-12"><div class="icon">😔</div><div>No matching recipes found. Try adding more ingredients!</div></div>`;
+    return;
+  }
+  container.innerHTML = recipes.map(r => `
+    <div class="col-12 col-md-6 col-xl-4">
+      <div class="recipe-card h-100" data-id="${r.id}" onclick="openRecipe('${r.id}')">
+        <div class="recipe-match">${r.match_score || 0}% match</div>
+        <div class="d-flex align-items-start gap-3 mb-2">
+          <div class="recipe-emoji">${r.image_emoji || '🍽️'}</div>
+          <div class="flex-grow-1">
+            <div style="font-weight:600;font-size:.95rem">${r.name}</div>
+            <div style="color:var(--text-muted);font-size:.8rem">${r.cuisine}</div>
+          </div>
+        </div>
+        <div class="d-flex flex-wrap gap-1 mb-2">
+          <span class="recipe-badge"><i class="bi bi-clock me-1"></i>${r.total_time}m</span>
+          <span class="recipe-badge"><i class="bi bi-speedometer me-1"></i>${r.difficulty}</span>
+          <span class="recipe-badge"><i class="bi bi-people me-1"></i>${r.servings}</span>
+          ${(r.dietary||[]).slice(0,2).map(d => `<span class="diet-tag">${d}</span>`).join('')}
+        </div>
+        <div style="font-size:.8rem;color:var(--text-muted)">
+          ${r.ingredient_overlap}/${r.total_ingredients} ingredients available
+        </div>
+        <div class="ingredient-bar">
+          <div class="ingredient-bar-fill" style="width:${Math.min(100,(r.ingredient_overlap/Math.max(r.total_ingredients,1))*100)}%"></div>
+        </div>
+        ${r.missing_ingredients && r.missing_ingredients.length > 0 ?
+          `<div class="mt-2" style="font-size:.75rem;color:var(--text-muted)">
+            Missing: ${r.missing_ingredients.slice(0,3).join(', ')}${r.missing_ingredients.length > 3 ? '…' : ''}
+           </div>` : '<div class="mt-2" style="font-size:.75rem;color:#22c55e;font-weight:600;">✅ You have all ingredients!</div>'
+        }
+        <div class="d-flex gap-2 mt-3">
+          <button class="btn-primary-custom flex-grow-1" style="font-size:.8rem;padding:.35rem" onclick="event.stopPropagation();openRecipe('${r.id}')">
+            <i class="bi bi-journal-text me-1"></i>View Recipe
+          </button>
+          <button class="btn-outline-custom" style="font-size:.8rem;padding:.35rem .65rem" onclick="event.stopPropagation();toggleFavorite('${r.id}', this)" title="Favorite">
+            <i class="bi ${isFavorite(r.id) ? 'bi-heart-fill' : 'bi-heart'}" style="${isFavorite(r.id) ? 'color:#ef4444' : ''}"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ─── Recipe Detail ─────────────────────────────────────────────────────────
+async function openRecipe(id) {
+  // Switch to detail tab
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('[data-tab="detail"]').classList.add('active');
+  document.querySelectorAll('.tab-panel').forEach(p => p.style.display = 'none');
+  document.getElementById('detailPanel').style.display = '';
+  detailContent.innerHTML = '<div class="text-center py-5"><div class="typing-dots" style="justify-content:center"><span></span><span></span><span></span></div></div>';
+
+  try {
+    const res = await fetch(`/api/recipe/${id}`);
+    const r = await res.json();
+    if (r.error) { detailContent.innerHTML = `<div class="alert alert-danger">${r.error}</div>`; return; }
+
+    const missingIngs = (r.ingredients || []).filter(i => !STATE.ingredients.includes(i.toLowerCase()));
+    const availableIngs = (r.ingredients || []).filter(i => STATE.ingredients.includes(i.toLowerCase()));
+
+    detailContent.innerHTML = `
+      <div style="max-width:760px">
+        <!-- Header -->
+        <div class="d-flex align-items-center gap-3 mb-4">
+          <div style="font-size:3.5rem">${r.image_emoji || '🍽️'}</div>
+          <div>
+            <h2 style="font-family:'Playfair Display',serif;margin:0">${r.name}</h2>
+            <div style="color:var(--text-muted)">${r.cuisine} • ${r.category}</div>
+          </div>
+          <button class="ms-auto btn-outline-custom" onclick="toggleFavorite('${r.id}', this)" title="Favorite">
+            <i class="bi ${isFavorite(r.id) ? 'bi-heart-fill' : 'bi-heart'}" style="${isFavorite(r.id) ? 'color:#ef4444' : ''}"></i>
+            ${isFavorite(r.id) ? 'Saved' : 'Save'}
+          </button>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="row g-2 mb-4">
+          <div class="col-6 col-sm-3"><div class="stat-box"><div class="stat-val">${r.prep_time}m</div><div class="stat-lbl">Prep Time</div></div></div>
+          <div class="col-6 col-sm-3"><div class="stat-box"><div class="stat-val">${r.cook_time}m</div><div class="stat-lbl">Cook Time</div></div></div>
+          <div class="col-6 col-sm-3"><div class="stat-box"><div class="stat-val">${r.servings}</div><div class="stat-lbl">Servings</div></div></div>
+          <div class="col-6 col-sm-3"><div class="stat-box"><div class="stat-val">${r.difficulty}</div><div class="stat-lbl">Difficulty</div></div></div>
+        </div>
+
+        <!-- Dietary + Spice -->
+        <div class="d-flex flex-wrap gap-2 mb-4">
+          ${(r.dietary||[]).map(d => `<span class="diet-tag">${d}</span>`).join('')}
+          <span class="recipe-badge">🌶️ ${r.spice_level}</span>
+        </div>
+
+        <!-- Ingredients -->
+        <div class="mb-4">
+          <h5 style="font-family:'Playfair Display',serif;color:var(--primary)">Ingredients</h5>
+          <div class="row g-2">
+            ${(r.ingredients||[]).map(i => {
+              const have = STATE.ingredients.includes(i.toLowerCase());
+              return `<div class="col-6 col-sm-4 col-md-3">
+                <div style="background:var(--card-bg);border:1px solid ${have ? '#22c55e44' : 'var(--card-border)'};border-radius:var(--radius-sm);padding:.4rem .7rem;font-size:.83rem">
+                  <span style="margin-right:6px">${have ? '✅' : '❌'}</span>${i}
+                </div></div>`;
+            }).join('')}
+          </div>
+          ${missingIngs.length > 0 ? `
+            <div class="mt-2 p-2" style="background:rgba(239,68,68,.08);border-radius:var(--radius-sm);font-size:.83rem;color:#ef4444">
+              <i class="bi bi-exclamation-triangle me-1"></i>
+              Missing ${missingIngs.length} ingredient(s): ${missingIngs.join(', ')}
+            </div>` : `<div class="mt-2 p-2" style="background:rgba(34,197,94,.08);border-radius:var(--radius-sm);font-size:.83rem;color:#22c55e">
+              ✅ You have all required ingredients!
+            </div>`}
+        </div>
+
+        <!-- Instructions -->
+        <div class="mb-4">
+          <h5 style="font-family:'Playfair Display',serif;color:var(--primary)">Step-by-Step Instructions</h5>
+          ${(r.instructions||[]).map((step, i) => `
+            <div class="step-card">
+              <div class="step-num">${i+1}</div>
+              <div style="font-size:.9rem">${step}</div>
+            </div>`).join('')}
+        </div>
+
+        <!-- Chef Tips -->
+        ${r.tips && r.tips.length > 0 ? `
+          <div class="mb-4">
+            <h5 style="font-family:'Playfair Display',serif;color:var(--primary)">👨‍🍳 Chef's Tips</h5>
+            ${r.tips.map(t => `<div class="tip-card"><i class="bi bi-lightbulb-fill me-2" style="color:var(--primary)"></i>${t}</div>`).join('')}
+          </div>` : ''}
+
+        <!-- Substitutions -->
+        ${r.substitutions && Object.keys(r.substitutions).length > 0 ? `
+          <div class="mb-4">
+            <h5 style="font-family:'Playfair Display',serif;color:var(--primary)">🔄 Substitution Guide</h5>
+            ${Object.entries(r.substitutions).map(([k, v]) => `
+              <div class="substitution-row">
+                <strong style="color:var(--primary)">${k}</strong>
+                <i class="bi bi-arrow-right mx-2" style="color:var(--text-muted)"></i>
+                ${v}
+              </div>`).join('')}
+          </div>` : ''}
+
+        <!-- AI Cook Button -->
+        <div class="d-flex gap-2 mt-2 flex-wrap">
+          <button class="btn-primary-custom" onclick="askAIAboutRecipe('${r.name}')">
+            <i class="bi bi-stars me-1"></i>Ask AI for personalized version
+          </button>
+          <button class="btn-outline-custom" onclick="copyRecipe('${r.id}')">
+            <i class="bi bi-clipboard me-1"></i>Copy Recipe
+          </button>
+        </div>
+      </div>
+    `;
+  } catch(e) {
+    detailContent.innerHTML = `<div class="alert alert-danger">Could not load recipe. Is the server running?</div>`;
+  }
+}
+
+function askAIAboutRecipe(name) {
+  chatInput.value = `Generate a personalized version of "${name}" using my available ingredients and dietary preferences. Include substitutions for any missing items.`;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('[data-tab="chat"]').classList.add('active');
+  document.querySelectorAll('.tab-panel').forEach(p => p.style.display = 'none');
+  document.getElementById('chatPanel').style.display = '';
+  sendMessage();
+}
+
+function copyRecipe(id) {
+  fetch(`/api/recipe/${id}`).then(r => r.json()).then(r => {
+    const text = `${r.name}\n\nIngredients:\n${r.ingredients.join('\n')}\n\nInstructions:\n${r.instructions.map((s,i) => `${i+1}. ${s}`).join('\n')}`;
+    navigator.clipboard.writeText(text).then(() => showToast('Recipe copied to clipboard!', 'success'));
+  });
+}
+
+// ─── Favorites ──────────────────────────────────────────────────────────────
+function isFavorite(id) {
+  return STATE.favorites.some(f => f.id === id);
+}
+
+function toggleFavorite(id, btn) {
+  if (isFavorite(id)) {
+    STATE.favorites = STATE.favorites.filter(f => f.id !== id);
+    if (btn) { btn.querySelector('i').className = 'bi bi-heart'; btn.querySelector('i').style.color=''; }
+    showToast('Removed from favorites', 'secondary');
+  } else {
+    fetch(`/api/recipe/${id}`).then(r => r.json()).then(r => {
+      STATE.favorites.push(r);
+      localStorage.setItem('chefbot_favs', JSON.stringify(STATE.favorites));
+      if (btn) { btn.querySelector('i').className = 'bi bi-heart-fill'; btn.querySelector('i').style.color='#ef4444'; }
+      showToast('Added to favorites! ❤️', 'success');
+      updateStats();
+    });
+    return;
+  }
+  localStorage.setItem('chefbot_favs', JSON.stringify(STATE.favorites));
+  updateStats();
+}
+
+function renderFavorites() {
+  if (STATE.favorites.length === 0) {
+    favGrid.innerHTML = `<div class="empty-state col-12"><div class="icon">💝</div><div>Save recipes you love by clicking the ♡ Favorite button on any recipe card</div></div>`;
+    return;
+  }
+  renderRecipeGrid(STATE.favorites, favGrid);
+}
+
+// ─── Substitutions ────────────────────────────────────────────────────────
+subFetchBtn.addEventListener('click', async () => {
+  const ing = subIngInput.value.trim();
+  if (!ing) { showToast('Enter an ingredient!', 'warning'); return; }
+  subResults.innerHTML = '<div class="text-center py-3"><div class="typing-dots" style="justify-content:center"><span></span><span></span><span></span></div></div>';
+  try {
+    const res = await fetch('/api/substitute', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        ingredient: ing,
+        context: subContextInput.value.trim(),
+        dietary: STATE.dietary,
+      })
+    });
+    const data = await res.json();
+    subResults.innerHTML = `
+      <div class="card" style="background:var(--card-bg);border-color:var(--card-border)">
+        <div class="card-body">
+          <h6 style="color:var(--primary)">Substitutions for: <strong>${ing}</strong></h6>
+          <div>${formatMessage(data.substitutions || 'No substitutions found.')}</div>
+        </div>
+      </div>`;
+  } catch(e) {
+    subResults.innerHTML = `<div class="alert alert-danger">Server error.</div>`;
+  }
+});
+
+subIngInput.addEventListener('keydown', e => { if (e.key === 'Enter') subFetchBtn.click(); });
+
+// ─── Stats ────────────────────────────────────────────────────────────────
+function updateStats() {
+  document.getElementById('statIngCount').textContent = STATE.ingredients.length;
+  document.getElementById('statChatCount').textContent = STATE.chatCount;
+  document.getElementById('statFavCount').textContent = STATE.favorites.length;
+  document.getElementById('statRecCount').textContent = STATE.recCount;
+}
+
+// ─── Toast ────────────────────────────────────────────────────────────────
+function showToast(msg, type='success') {
+  const container = document.getElementById('toastContainer');
+  const id = 'toast_' + Date.now();
+  const colorMap = {success:'#22c55e', warning:'#eab308', secondary:'#94a3b8', danger:'#ef4444'};
+  const div = document.createElement('div');
+  div.id = id;
+  div.style.cssText = `background:var(--card-bg);border:1px solid ${colorMap[type]||'#22c55e'};
+    border-radius:var(--radius-sm);padding:.65rem 1rem;min-width:220px;
+    font-size:.88rem;color:var(--text-main);animation:tagPop .2s ease;`;
+  div.textContent = msg;
+  container.appendChild(div);
+  setTimeout(() => div.remove(), 3000);
+}
+
+// ─── Init ─────────────────────────────────────────────────────────────────
+updateStats();
+renderFavorites();
+</script>
+</body>
+</html>

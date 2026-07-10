@@ -1,0 +1,495 @@
+[
+  {
+    "id": "r001",
+    "name": "Butter Chicken (Murgh Makhani)",
+    "cuisine": "Indian",
+    "category": "Non-Vegetarian",
+    "dietary": ["gluten-free"],
+    "difficulty": "Medium",
+    "prep_time": 20,
+    "cook_time": 40,
+    "total_time": 60,
+    "servings": 4,
+    "spice_level": "Medium",
+    "ingredients": [
+      "chicken breast", "butter", "heavy cream", "tomato puree", "onion",
+      "garlic", "ginger", "garam masala", "cumin", "coriander powder",
+      "turmeric", "kashmiri red chili powder", "kasuri methi", "salt", "oil"
+    ],
+    "instructions": [
+      "Marinate chicken in yogurt, turmeric, red chili powder, and garam masala for 30 minutes.",
+      "Grill or pan-fry chicken pieces until cooked through. Set aside.",
+      "Heat butter and oil in a pan. Sauté chopped onions until golden brown.",
+      "Add ginger-garlic paste and cook for 2 minutes until aromatic.",
+      "Add tomato puree and cook on medium heat for 10 minutes until oil separates.",
+      "Add cumin, coriander, garam masala, and kashmiri red chili powder. Mix well.",
+      "Add heavy cream and mix. Simmer on low heat for 5 minutes.",
+      "Add the cooked chicken pieces to the gravy.",
+      "Crush kasuri methi between your palms and add to the curry.",
+      "Simmer for 10 more minutes. Serve hot with naan or rice."
+    ],
+    "tips": [
+      "Use kashmiri red chili for vibrant color without excessive heat.",
+      "Let the chicken marinate overnight for deeper flavor.",
+      "Adding a pinch of sugar balances the tanginess of tomatoes."
+    ],
+    "substitutions": {
+      "heavy cream": "coconut cream or cashew paste for dairy-free version",
+      "chicken breast": "paneer or tofu for vegetarian version",
+      "butter": "ghee or vegan butter"
+    },
+    "image_emoji": "🍗",
+    "tags": ["popular", "restaurant-style", "indian", "curry"]
+  },
+  {
+    "id": "r002",
+    "name": "Dal Tadka",
+    "cuisine": "Indian",
+    "category": "Vegetarian",
+    "dietary": ["vegetarian", "vegan", "gluten-free"],
+    "difficulty": "Easy",
+    "prep_time": 10,
+    "cook_time": 30,
+    "total_time": 40,
+    "servings": 4,
+    "spice_level": "Medium",
+    "ingredients": [
+      "yellow lentils", "onion", "tomato", "garlic", "ginger", "green chili",
+      "cumin seeds", "mustard seeds", "turmeric", "red chili powder",
+      "coriander powder", "garam masala", "ghee", "oil", "salt", "fresh coriander"
+    ],
+    "instructions": [
+      "Wash and soak yellow lentils (toor dal) for 30 minutes.",
+      "Pressure cook dal with turmeric, salt, and water for 3-4 whistles.",
+      "Heat ghee in a tadka pan. Add cumin and mustard seeds until they splutter.",
+      "Add chopped onions and fry until golden brown.",
+      "Add ginger-garlic paste and green chilies. Cook for 2 minutes.",
+      "Add chopped tomatoes and cook until mushy.",
+      "Add red chili powder, coriander powder, and garam masala.",
+      "Pour this tadka over the cooked dal and mix well.",
+      "Simmer for 5 minutes. Garnish with fresh coriander.",
+      "Serve hot with rice or roti."
+    ],
+    "tips": [
+      "A final tempering of dried red chilies in ghee adds smoky flavor.",
+      "For restaurant-style dal, add a small piece of charcoal for smoky aroma.",
+      "Adding lemon juice at the end brightens the flavors."
+    ],
+    "substitutions": {
+      "yellow lentils": "red lentils or split moong dal",
+      "ghee": "butter or vegetable oil",
+      "fresh coriander": "dried coriander or parsley"
+    },
+    "image_emoji": "🥘",
+    "tags": ["vegan", "healthy", "comfort-food", "indian", "dal"]
+  },
+  {
+    "id": "r003",
+    "name": "Vegetable Biryani",
+    "cuisine": "Indian",
+    "category": "Vegetarian",
+    "dietary": ["vegetarian", "vegan", "gluten-free"],
+    "difficulty": "Medium",
+    "prep_time": 30,
+    "cook_time": 45,
+    "total_time": 75,
+    "servings": 4,
+    "spice_level": "Medium-High",
+    "ingredients": [
+      "basmati rice", "mixed vegetables", "onion", "tomato", "yogurt",
+      "garlic", "ginger", "bay leaves", "cloves", "cardamom", "cinnamon",
+      "biryani masala", "saffron", "mint leaves", "ghee", "salt", "oil"
+    ],
+    "instructions": [
+      "Soak basmati rice for 30 minutes. Parboil with whole spices and salt until 70% cooked.",
+      "Fry thinly sliced onions in oil until deep golden brown (birista). Drain and set aside.",
+      "In the same oil, add bay leaves, cloves, cardamom, and cinnamon.",
+      "Add ginger-garlic paste and sauté. Add tomatoes and cook until soft.",
+      "Add mixed vegetables, biryani masala, yogurt, and salt. Cook for 10 minutes.",
+      "Layer the partially cooked rice over the vegetable mixture.",
+      "Add fried onions, mint leaves, and saffron milk on top.",
+      "Seal the pot with a tight lid or dough. Cook on dum (low heat) for 20 minutes.",
+      "Let it rest for 10 minutes before opening.",
+      "Gently mix and serve with raita and salad."
+    ],
+    "tips": [
+      "Soaking saffron in warm milk gives better color and aroma.",
+      "Dum cooking (sealed low-heat cooking) is the key to authentic biryani.",
+      "Use long-grain aged basmati rice for best results."
+    ],
+    "substitutions": {
+      "basmati rice": "long-grain white rice",
+      "yogurt": "coconut yogurt for vegan version",
+      "saffron": "turmeric for color (different flavor)",
+      "ghee": "oil for vegan version"
+    },
+    "image_emoji": "🍚",
+    "tags": ["vegetarian", "festive", "indian", "rice", "biryani"]
+  },
+  {
+    "id": "r004",
+    "name": "Masoor Dal Soup",
+    "cuisine": "Indian",
+    "category": "Vegetarian",
+    "dietary": ["vegetarian", "vegan", "gluten-free"],
+    "difficulty": "Easy",
+    "prep_time": 5,
+    "cook_time": 25,
+    "total_time": 30,
+    "servings": 2,
+    "spice_level": "Mild",
+    "ingredients": [
+      "red lentils", "onion", "garlic", "tomato", "cumin", "turmeric",
+      "red chili powder", "salt", "oil", "lemon juice", "fresh coriander"
+    ],
+    "instructions": [
+      "Rinse red lentils thoroughly.",
+      "Heat oil and sauté diced onion and garlic until soft.",
+      "Add chopped tomato, cumin, turmeric, and red chili powder.",
+      "Add lentils and 3 cups water. Bring to a boil.",
+      "Reduce heat and simmer for 20 minutes until lentils are completely soft.",
+      "Blend half the soup for a creamy texture (optional).",
+      "Season with salt and lemon juice.",
+      "Garnish with fresh coriander and serve with bread."
+    ],
+    "tips": [
+      "Red lentils cook much faster than other varieties.",
+      "A squeeze of lemon at the end is essential for brightness.",
+      "Add spinach in the last 5 minutes for extra nutrition."
+    ],
+    "substitutions": {
+      "red lentils": "split moong dal or masoor dal",
+      "lemon juice": "lime juice or tamarind water",
+      "fresh coriander": "parsley"
+    },
+    "image_emoji": "🥣",
+    "tags": ["vegan", "healthy", "quick", "soup", "lentil"]
+  },
+  {
+    "id": "r005",
+    "name": "Paneer Tikka",
+    "cuisine": "Indian",
+    "category": "Vegetarian",
+    "dietary": ["vegetarian", "gluten-free"],
+    "difficulty": "Easy",
+    "prep_time": 15,
+    "cook_time": 20,
+    "total_time": 35,
+    "servings": 2,
+    "spice_level": "Medium",
+    "ingredients": [
+      "paneer", "yogurt", "bell pepper", "onion", "tomato",
+      "garam masala", "red chili powder", "turmeric", "cumin powder",
+      "kasuri methi", "lemon juice", "oil", "salt", "ginger-garlic paste"
+    ],
+    "instructions": [
+      "Cut paneer, bell peppers, onion, and tomato into chunks.",
+      "Mix yogurt with ginger-garlic paste, garam masala, red chili powder, turmeric, cumin, salt, and lemon juice.",
+      "Marinate paneer and vegetables in the yogurt mixture for at least 30 minutes.",
+      "Thread the marinated paneer and vegetables onto skewers.",
+      "Grill in oven at 220°C for 15 minutes, turning once halfway.",
+      "Alternatively, cook in a grill pan with light oil.",
+      "Sprinkle crushed kasuri methi and squeeze lemon juice on top.",
+      "Serve with mint chutney and sliced onion rings."
+    ],
+    "tips": [
+      "Longer marination (2-3 hours) yields more flavorful tikka.",
+      "Charring slightly gives authentic tandoor flavor.",
+      "Adding besan (gram flour) to marinade helps it stick better."
+    ],
+    "substitutions": {
+      "paneer": "tofu or halloumi cheese",
+      "yogurt": "coconut yogurt for dairy-free",
+      "bell pepper": "zucchini or mushrooms"
+    },
+    "image_emoji": "🧆",
+    "tags": ["vegetarian", "grilled", "starter", "indian", "paneer"]
+  },
+  {
+    "id": "r006",
+    "name": "Aloo Paratha",
+    "cuisine": "Indian",
+    "category": "Vegetarian",
+    "dietary": ["vegetarian"],
+    "difficulty": "Medium",
+    "prep_time": 20,
+    "cook_time": 20,
+    "total_time": 40,
+    "servings": 4,
+    "spice_level": "Mild-Medium",
+    "ingredients": [
+      "whole wheat flour", "potato", "onion", "green chili",
+      "fresh coriander", "cumin seeds", "ajwain (carom seeds)",
+      "red chili powder", "amchur (dry mango powder)", "salt", "ghee", "oil"
+    ],
+    "instructions": [
+      "Knead whole wheat flour with salt, oil, and water to form a soft dough. Rest for 20 minutes.",
+      "Boil, peel, and mash potatoes completely without lumps.",
+      "Mix mashed potato with finely chopped onion, green chili, coriander, cumin, ajwain, red chili powder, amchur, and salt.",
+      "Divide dough into balls. Flatten each into a small disc.",
+      "Place a portion of potato filling in the center.",
+      "Seal the edges and gently roll into a flat round paratha.",
+      "Cook on a hot tawa with ghee/oil until golden brown spots appear on both sides.",
+      "Serve hot with butter, yogurt, or pickle."
+    ],
+    "tips": [
+      "Make sure the filling has no excess moisture to prevent paratha from breaking.",
+      "Seal the filling completely before rolling to avoid spilling.",
+      "Cook on medium-high heat for crispy parathas."
+    ],
+    "substitutions": {
+      "whole wheat flour": "all-purpose flour or gluten-free flour blend",
+      "potato": "sweet potato, cauliflower, or paneer",
+      "ghee": "butter or oil",
+      "amchur": "lemon juice or tamarind powder"
+    },
+    "image_emoji": "🫓",
+    "tags": ["vegetarian", "breakfast", "indian", "bread", "potato"]
+  },
+  {
+    "id": "r007",
+    "name": "Chana Masala",
+    "cuisine": "Indian",
+    "category": "Vegetarian",
+    "dietary": ["vegetarian", "vegan", "gluten-free"],
+    "difficulty": "Easy",
+    "prep_time": 10,
+    "cook_time": 30,
+    "total_time": 40,
+    "servings": 4,
+    "spice_level": "Medium-High",
+    "ingredients": [
+      "chickpeas", "onion", "tomato", "garlic", "ginger", "green chili",
+      "cumin seeds", "coriander powder", "cumin powder", "turmeric",
+      "chana masala powder", "red chili powder", "amchur", "oil", "salt", "fresh coriander"
+    ],
+    "instructions": [
+      "Soak dried chickpeas overnight and pressure cook until tender (or use canned).",
+      "Heat oil and add cumin seeds until they splutter.",
+      "Add finely chopped onions and fry until dark golden.",
+      "Add ginger-garlic paste and green chilies. Cook 2 minutes.",
+      "Add pureed tomatoes and cook until oil separates.",
+      "Add all dry spices: coriander, cumin, turmeric, chana masala, red chili powder.",
+      "Add cooked chickpeas and mix well with the masala.",
+      "Add 1 cup water and simmer for 15 minutes until gravy thickens.",
+      "Add amchur powder, adjust salt and garnish with coriander.",
+      "Serve with bhatura, puri, or rice."
+    ],
+    "tips": [
+      "Pressing some chickpeas while cooking thickens the gravy naturally.",
+      "Adding tea bag while cooking chickpeas gives authentic dark color.",
+      "Amchur (dry mango powder) is key for the tangy flavor."
+    ],
+    "substitutions": {
+      "chickpeas": "kidney beans or black beans",
+      "chana masala powder": "mix of coriander, cumin, amchur, and garam masala",
+      "amchur": "lemon juice or tamarind paste"
+    },
+    "image_emoji": "🫘",
+    "tags": ["vegan", "protein-rich", "indian", "chickpea", "curry"]
+  },
+  {
+    "id": "r008",
+    "name": "Egg Fried Rice",
+    "cuisine": "Asian-Fusion",
+    "category": "Non-Vegetarian",
+    "dietary": ["gluten-free"],
+    "difficulty": "Easy",
+    "prep_time": 10,
+    "cook_time": 15,
+    "total_time": 25,
+    "servings": 2,
+    "spice_level": "Mild",
+    "ingredients": [
+      "cooked rice", "eggs", "garlic", "ginger", "spring onion",
+      "carrot", "peas", "soy sauce", "sesame oil", "oil", "salt", "pepper"
+    ],
+    "instructions": [
+      "Use day-old cold rice for best results (freshly cooked rice is too moist).",
+      "Beat eggs with a pinch of salt.",
+      "Heat oil in a wok over high heat. Scramble eggs and set aside.",
+      "In the same wok, add more oil. Fry minced garlic and ginger.",
+      "Add diced carrots and peas. Stir fry for 2-3 minutes.",
+      "Add cold rice and toss continuously on high heat for 3-4 minutes.",
+      "Add soy sauce and sesame oil. Mix thoroughly.",
+      "Add scrambled eggs back and fold in.",
+      "Garnish with spring onions. Serve immediately."
+    ],
+    "tips": [
+      "High heat (wok hei) is crucial for restaurant-style fried rice.",
+      "Day-old refrigerated rice separates better and doesn't clump.",
+      "Add a splash of rice wine vinegar for extra flavor."
+    ],
+    "substitutions": {
+      "soy sauce": "tamari for gluten-free, or coconut aminos",
+      "eggs": "silken tofu for vegan version",
+      "sesame oil": "any neutral oil (flavor will differ)"
+    },
+    "image_emoji": "🍳",
+    "tags": ["quick", "asian", "rice", "egg", "leftover-friendly"]
+  },
+  {
+    "id": "r009",
+    "name": "Palak Paneer",
+    "cuisine": "Indian",
+    "category": "Vegetarian",
+    "dietary": ["vegetarian", "gluten-free"],
+    "difficulty": "Medium",
+    "prep_time": 15,
+    "cook_time": 25,
+    "total_time": 40,
+    "servings": 4,
+    "spice_level": "Mild-Medium",
+    "ingredients": [
+      "spinach", "paneer", "onion", "tomato", "garlic", "ginger",
+      "green chili", "cream", "cumin seeds", "coriander powder",
+      "garam masala", "turmeric", "kasuri methi", "ghee", "salt"
+    ],
+    "instructions": [
+      "Blanch spinach in boiling water for 2 minutes, then immediately transfer to ice water to retain green color.",
+      "Blend blanched spinach to a smooth puree.",
+      "Cut paneer into cubes and lightly fry until golden. Set aside.",
+      "Heat ghee in a pan. Add cumin seeds until they crackle.",
+      "Sauté finely chopped onions until translucent.",
+      "Add ginger-garlic paste and green chilies. Cook 2 minutes.",
+      "Add chopped tomatoes and cook until soft.",
+      "Add all spice powders and mix well.",
+      "Pour in the spinach puree and simmer for 5 minutes.",
+      "Add paneer cubes, cream, and kasuri methi. Simmer 5 more minutes and serve."
+    ],
+    "tips": [
+      "Blanching and immediately cooling spinach preserves bright green color.",
+      "Do not overcook after adding spinach puree — it loses color.",
+      "A touch of cream at the end makes the gravy silky smooth."
+    ],
+    "substitutions": {
+      "paneer": "tofu or chickpeas for vegan version",
+      "cream": "cashew cream or coconut cream",
+      "ghee": "oil or vegan butter",
+      "spinach": "kale or fenugreek leaves (methi)"
+    },
+    "image_emoji": "🥬",
+    "tags": ["vegetarian", "healthy", "indian", "spinach", "paneer"]
+  },
+  {
+    "id": "r010",
+    "name": "Masala Chai",
+    "cuisine": "Indian",
+    "category": "Beverage",
+    "dietary": ["vegetarian", "gluten-free"],
+    "difficulty": "Easy",
+    "prep_time": 2,
+    "cook_time": 8,
+    "total_time": 10,
+    "servings": 2,
+    "spice_level": "Mild",
+    "ingredients": [
+      "tea leaves", "milk", "water", "sugar", "ginger",
+      "cardamom", "cloves", "cinnamon", "black pepper"
+    ],
+    "instructions": [
+      "Crush ginger, cardamom pods, cloves, and cinnamon lightly.",
+      "Boil water with crushed spices for 2 minutes.",
+      "Add tea leaves and boil for 1 minute.",
+      "Add milk and sugar.",
+      "Bring to a boil, then simmer for 2-3 minutes.",
+      "Strain through a fine sieve into cups.",
+      "Serve immediately while hot."
+    ],
+    "tips": [
+      "Simmering gently (not boiling hard) after adding milk prevents scalding.",
+      "Adjust spice quantities to personal preference.",
+      "Strong Assam tea works best for masala chai."
+    ],
+    "substitutions": {
+      "milk": "oat milk or almond milk for dairy-free",
+      "sugar": "honey, jaggery, or sugar-free sweetener",
+      "tea leaves": "tea bags (use 2 per serving)"
+    },
+    "image_emoji": "☕",
+    "tags": ["beverage", "indian", "tea", "comfort", "quick"]
+  },
+  {
+    "id": "r011",
+    "name": "Rajma (Red Kidney Bean Curry)",
+    "cuisine": "Indian",
+    "category": "Vegetarian",
+    "dietary": ["vegetarian", "vegan", "gluten-free"],
+    "difficulty": "Medium",
+    "prep_time": 15,
+    "cook_time": 45,
+    "total_time": 60,
+    "servings": 4,
+    "spice_level": "Medium",
+    "ingredients": [
+      "kidney beans", "onion", "tomato", "garlic", "ginger",
+      "cumin seeds", "bay leaf", "coriander powder", "cumin powder",
+      "turmeric", "red chili powder", "garam masala", "oil", "salt", "fresh coriander"
+    ],
+    "instructions": [
+      "Soak kidney beans overnight. Pressure cook until soft.",
+      "Heat oil in a deep pan. Add cumin seeds and bay leaf.",
+      "Fry finely chopped onions until golden brown.",
+      "Add ginger-garlic paste. Cook for 2 minutes.",
+      "Add pureed tomatoes. Cook until oil separates.",
+      "Add all dry spices and mix well.",
+      "Add cooked kidney beans with their cooking liquid.",
+      "Simmer on medium heat for 20 minutes until gravy thickens.",
+      "Adjust salt. Garnish with fresh coriander.",
+      "Serve with steamed rice (Rajma Chawal)."
+    ],
+    "tips": [
+      "Never add salt while pressure cooking — it makes beans tough.",
+      "Mashing a few beans while cooking creates a thicker, creamier curry.",
+      "Rajma tastes better the next day as flavors deepen."
+    ],
+    "substitutions": {
+      "kidney beans": "black beans or pinto beans",
+      "fresh coriander": "parsley",
+      "garam masala": "mix of cumin, coriander, and allspice"
+    },
+    "image_emoji": "🫘",
+    "tags": ["vegan", "protein-rich", "indian", "beans", "comfort-food"]
+  },
+  {
+    "id": "r012",
+    "name": "Banana Pancakes",
+    "cuisine": "American",
+    "category": "Vegetarian",
+    "dietary": ["vegetarian"],
+    "difficulty": "Easy",
+    "prep_time": 5,
+    "cook_time": 15,
+    "total_time": 20,
+    "servings": 2,
+    "spice_level": "None",
+    "ingredients": [
+      "ripe banana", "eggs", "all-purpose flour", "milk", "baking powder",
+      "vanilla extract", "sugar", "salt", "butter"
+    ],
+    "instructions": [
+      "Mash ripe bananas thoroughly in a bowl.",
+      "Add eggs and whisk together.",
+      "Mix in flour, baking powder, sugar, and salt.",
+      "Gradually add milk to get pancake batter consistency.",
+      "Add vanilla extract and mix.",
+      "Heat a non-stick pan with butter on medium heat.",
+      "Pour a ladle of batter. Cook until bubbles form on surface (2-3 min).",
+      "Flip and cook other side until golden.",
+      "Serve with maple syrup, honey, or fresh fruit."
+    ],
+    "tips": [
+      "Riper bananas make sweeter, more flavorful pancakes.",
+      "Don't overmix the batter — lumps are okay.",
+      "Let batter rest 5 minutes before cooking for fluffier pancakes."
+    ],
+    "substitutions": {
+      "all-purpose flour": "oat flour or almond flour for gluten-free",
+      "milk": "plant-based milk for dairy-free",
+      "eggs": "flax egg (1 tbsp flaxseed + 3 tbsp water) for vegan",
+      "butter": "coconut oil"
+    },
+    "image_emoji": "🥞",
+    "tags": ["breakfast", "sweet", "quick", "banana", "pancakes"]
+  }
+]

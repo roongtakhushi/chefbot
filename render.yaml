@@ -1,0 +1,27 @@
+﻿services:
+  - type: web
+    name: chefbot
+    runtime: python
+    buildCommand: pip install -r requirements.txt && python seed_knowledge_base.py
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --timeout 120
+    disk:
+      name: chroma-db
+      mountPath: /opt/render/project/src/chroma_db
+      sizeGB: 1
+    envVars:
+      - key: WATSONX_API_KEY
+        sync: false
+      - key: WATSONX_PROJECT_ID
+        sync: false
+      - key: WATSONX_URL
+        sync: false
+      - key: GRANITE_MODEL_ID
+        sync: false
+      - key: FLASK_SECRET_KEY
+        sync: false
+      - key: FLASK_DEBUG
+        value: "False"
+      - key: CHROMA_PERSIST_DIR
+        value: /opt/render/project/src/chroma_db
+      - key: EMBEDDING_MODEL
+        value: sentence-transformers/all-MiniLM-L6-v2
