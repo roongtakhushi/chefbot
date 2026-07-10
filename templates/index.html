@@ -59,7 +59,7 @@
     ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
 
     /* ─── Navbar ────────────────────────────────────────────────────────────── */
-    .navbar-brand .brand-text { font-family: 'Playfair Display', serif; font-size: 1.4rem; }
+    .navbar-brand .brand-text { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--text-main); }
     .navbar { border-bottom: 1px solid var(--card-border); backdrop-filter: blur(12px); }
     .ibm-badge {
       background: linear-gradient(135deg, #0f62fe, #4589ff);
@@ -340,8 +340,7 @@
 <nav class="navbar navbar-expand-lg sticky-top px-3" style="background:var(--surface-2);height:60px;">
   <a class="navbar-brand d-flex align-items-center gap-2" href="#">
     <span style="font-size:1.6rem;">🍳</span>
-    <span class="brand-text text-white">ChefBot</span>
-    <span class="ibm-badge">IBM Watsonx</span>
+    <span class="brand-text">ChefBot</span>
   </a>
   <div class="ms-auto d-flex align-items-center gap-2">
     <button class="btn btn-sm btn-outline-secondary" id="themeToggle" title="Toggle theme">

@@ -80,41 +80,46 @@ def index():
 @app.route("/api/chat", methods=["POST"])
 def chat():
     """Main chat endpoint — accepts ingredients + message, returns AI response."""
-    data = request.get_json(force=True)
-    user_message = data.get("message", "").strip()
-    ingredients = data.get("ingredients", [])
-    dietary = data.get("dietary", [])
-    preferences = data.get("preferences", {})
+    try:
+        data = request.get_json(force=True)
+        user_message = data.get("message", "").strip()
+        ingredients = data.get("ingredients", [])
+        dietary = data.get("dietary", [])
+        preferences = data.get("preferences", {})
 
-    if not user_message and not ingredients:
-        return jsonify({"error": "Please provide a message or ingredients."}), 400
+        if not user_message and not ingredients:
+            return jsonify({"error": "Please provide a message or ingredients."}), 400
 
-    # Step 1: RAG — retrieve relevant recipes
-    retrieved_recipes = []
-    if ingredients:
-        retrieved_recipes = retrieve_recipes(
+        # Step 1: RAG — retrieve relevant recipes
+        retrieved_recipes = []
+        if ingredients:
+            retrieved_recipes = retrieve_recipes(
+                ingredients=ingredients,
+                dietary_filters=dietary if dietary else None,
+                n_results=4,
+            )
+
+        # Step 2: Build context from retrieved recipes
+        recipe_context = _build_recipe_context(retrieved_recipes)
+
+        # Step 3: Generate response via Granite
+        response_text = generate_recipe_response(
+            agent_instructions=AGENT_INSTRUCTIONS,
+            user_message=user_message,
             ingredients=ingredients,
-            dietary_filters=dietary if dietary else None,
-            n_results=4,
+            dietary=dietary,
+            preferences=preferences,
+            recipe_context=recipe_context,
         )
 
-    # Step 2: Build context from retrieved recipes
-    recipe_context = _build_recipe_context(retrieved_recipes)
-
-    # Step 3: Generate response via Granite
-    response_text = generate_recipe_response(
-        agent_instructions=AGENT_INSTRUCTIONS,
-        user_message=user_message,
-        ingredients=ingredients,
-        dietary=dietary,
-        preferences=preferences,
-        recipe_context=recipe_context,
-    )
-
-    return jsonify({
-        "response": response_text,
-        "retrieved_recipes": retrieved_recipes[:3],
-    })
+        return jsonify({
+            "response": response_text,
+            "retrieved_recipes": retrieved_recipes[:3],
+        })
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": f"Internal Server Error: {str(e)}"}), 500
 
 
 @app.route("/api/recommend", methods=["POST"])
@@ -150,28 +155,33 @@ def get_recipe(recipe_id):
 @app.route("/api/substitute", methods=["POST"])
 def substitute():
     """Generate substitution suggestions for a given ingredient."""
-    data = request.get_json(force=True)
-    ingredient = data.get("ingredient", "")
-    context = data.get("context", "")  # e.g., recipe name
-    dietary = data.get("dietary", [])
+    try:
+        data = request.get_json(force=True)
+        ingredient = data.get("ingredient", "")
+        context = data.get("context", "")  # e.g., recipe name
+        dietary = data.get("dietary", [])
 
-    if not ingredient:
-        return jsonify({"error": "Ingredient required"}), 400
+        if not ingredient:
+            return jsonify({"error": "Ingredient required"}), 400
 
-    message = (
-        f"I need substitutions for '{ingredient}'"
-        + (f" in {context}" if context else "")
-        + ". Please list the best alternatives."
-    )
-    response = generate_recipe_response(
-        agent_instructions=AGENT_INSTRUCTIONS,
-        user_message=message,
-        ingredients=[ingredient],
-        dietary=dietary,
-        preferences={},
-        recipe_context="",
-    )
-    return jsonify({"substitutions": response})
+        message = (
+            f"I need substitutions for '{ingredient}'"
+            + (f" in {context}" if context else "")
+            + ". Please list the best alternatives."
+        )
+        response = generate_recipe_response(
+            agent_instructions=AGENT_INSTRUCTIONS,
+            user_message=message,
+            ingredients=[ingredient],
+            dietary=dietary,
+            preferences={},
+            recipe_context="",
+        )
+        return jsonify({"substitutions": response})
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": f"Internal Server Error: {str(e)}"}), 500
 
 
 @app.route("/api/health", methods=["GET"])
