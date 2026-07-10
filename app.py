@@ -125,19 +125,24 @@ def chat():
 @app.route("/api/recommend", methods=["POST"])
 def recommend():
     """Return recipe recommendations based on pantry ingredients."""
-    data = request.get_json(force=True)
-    ingredients = data.get("ingredients", [])
-    dietary = data.get("dietary", [])
+    try:
+        data = request.get_json(force=True)
+        ingredients = data.get("ingredients", [])
+        dietary = data.get("dietary", [])
 
-    if not ingredients:
-        return jsonify({"error": "No ingredients provided."}), 400
+        if not ingredients:
+            return jsonify({"error": "No ingredients provided."}), 400
 
-    recipes = retrieve_recipes(
-        ingredients=ingredients,
-        dietary_filters=dietary if dietary else None,
-        n_results=6,
-    )
-    return jsonify({"recipes": recipes})
+        recipes = retrieve_recipes(
+            ingredients=ingredients,
+            dietary_filters=dietary if dietary else None,
+            n_results=6,
+        )
+        return jsonify({"recipes": recipes})
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": f"Internal Server Error: {str(e)}"}), 500
 
 
 @app.route("/api/recipe/<recipe_id>", methods=["GET"])
