@@ -42,10 +42,10 @@ def build_recipe_document(recipe: dict) -> str:
 def seed():
     try:
         import chromadb
-        from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
+        from chromadb.utils.embedding_functions import ONNXMiniLM_L6_V2
     except ImportError:
-        print("ERROR: chromadb / sentence-transformers not installed.")
-        print("Run: pip install chromadb sentence-transformers")
+        print("ERROR: chromadb not installed.")
+        print("Run: pip install chromadb")
         sys.exit(1)
 
     if not os.path.exists(RECIPES_FILE):
@@ -55,9 +55,7 @@ def seed():
     with open(RECIPES_FILE, "r", encoding="utf-8") as f:
         recipes = json.load(f)
 
-    embedding_fn = SentenceTransformerEmbeddingFunction(
-        model_name=os.getenv("EMBEDDING_MODEL", "sentence-transformers/all-MiniLM-L6-v2")
-    )
+    embedding_fn = ONNXMiniLM_L6_V2()
 
     client = chromadb.PersistentClient(path=CHROMA_PERSIST_DIR)
 

@@ -9,12 +9,7 @@ ibm-watsonx-ai>=1.3.0
 
 # ─── RAG / Vector Store ───────────────────────────────────────────────────────
 chromadb==0.5.3
-sentence-transformers>=2.7.0
-
-# ─── ML / Numerics ────────────────────────────────────────────────────────────
-# CPU-only torch — avoids huge CUDA packages on Render free tier
---extra-index-url https://download.pytorch.org/whl/cpu
-torch>=2.0.0
+# (torch and sentence-transformers removed to save memory on Render 512MB limit)
 numpy>=1.24.0
 pandas>=2.2.0,<2.4.0
 

@@ -10,7 +10,7 @@ import os
 from typing import Optional
 
 import chromadb
-from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
+from chromadb.utils.embedding_functions import ONNXMiniLM_L6_V2
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -27,7 +27,7 @@ _recipes_cache: Optional[dict] = None
 def _get_collection():
     global _client, _collection
     if _collection is None:
-        embedding_fn = SentenceTransformerEmbeddingFunction(model_name=EMBEDDING_MODEL)
+        embedding_fn = ONNXMiniLM_L6_V2()
         _client = chromadb.PersistentClient(path=CHROMA_PERSIST_DIR)
         
         # Use get_or_create_collection to prevent crash if collection doesn't exist
