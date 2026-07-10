@@ -29,8 +29,71 @@ def _get_collection():
     if _collection is None:
         embedding_fn = SentenceTransformerEmbeddingFunction(model_name=EMBEDDING_MODEL)
         _client = chromadb.PersistentClient(path=CHROMA_PERSIST_DIR)
-        _collection = _client.get_collection(name="recipes", embedding_function=embedding_fn)
+        
+        # Use get_or_create_collection to prevent crash if collection doesn't exist
+        _collection = _client.get_or_create_collection(
+            name="recipes",
+            embedding_function=embedding_fn,
+            metadata={"hnsw:space": "cosine"}
+        )
+        
+        # If the collection is empty (e.g. fresh persistent disk on Render), automatically seed it
+        if _collection.count() == 0:
+            print("ChromaDB collection 'recipes' is empty. Seeding database at runtime...")
+            try:
+                _seed_database_at_runtime(_collection)
+            except Exception as e:
+                print(f"Error seeding database at runtime: {e}")
+                
     return _collection
+
+
+def _seed_database_at_runtime(collection):
+    if not os.path.exists(RECIPES_FILE):
+        print(f"Recipes file not found at {RECIPES_FILE}")
+        return
+        
+    with open(RECIPES_FILE, "r", encoding="utf-8") as f:
+        recipes = json.load(f)
+        
+    ids, documents, metadatas = [], [], []
+    for recipe in recipes:
+        # Build text document for embedding
+        parts = [
+            f"Recipe: {recipe['name']}",
+            f"Cuisine: {recipe['cuisine']}",
+            f"Category: {recipe['category']}",
+            f"Dietary: {', '.join(recipe.get('dietary', []))}",
+            f"Difficulty: {recipe['difficulty']}",
+            f"Spice Level: {recipe.get('spice_level', 'Unknown')}",
+            f"Cooking Time: {recipe['total_time']} minutes",
+            f"Servings: {recipe['servings']}",
+            f"Ingredients: {', '.join(recipe['ingredients'])}",
+            f"Tags: {', '.join(recipe.get('tags', []))}",
+        ]
+        for i, step in enumerate(recipe.get("instructions", []), 1):
+            parts.append(f"Step {i}: {step}")
+        doc = "\n".join(parts)
+        
+        meta = {
+            "id": recipe["id"],
+            "name": recipe["name"],
+            "cuisine": recipe["cuisine"],
+            "category": recipe["category"],
+            "dietary": json.dumps(recipe.get("dietary", [])),
+            "difficulty": recipe["difficulty"],
+            "total_time": recipe["total_time"],
+            "spice_level": recipe.get("spice_level", "Unknown"),
+            "servings": recipe["servings"],
+            "image_emoji": recipe.get("image_emoji", "🍽️"),
+            "tags": json.dumps(recipe.get("tags", [])),
+        }
+        ids.append(recipe["id"])
+        documents.append(doc)
+        metadatas.append(meta)
+        
+    collection.add(ids=ids, documents=documents, metadatas=metadatas)
+    print(f"Successfully seeded {len(recipes)} recipes into ChromaDB collection at runtime.")
 
 
 def _load_recipes() -> dict:
