@@ -12,7 +12,8 @@ chromadb==0.5.3
 sentence-transformers>=2.7.0
 
 # ─── ML / Numerics ────────────────────────────────────────────────────────────
-# torch: no hard pin — let pip resolve the correct wheel for the platform
+# CPU-only torch — avoids huge CUDA packages on Render free tier
+--extra-index-url https://download.pytorch.org/whl/cpu
 torch>=2.0.0
 numpy>=1.24.0
 pandas>=2.2.0,<2.4.0
