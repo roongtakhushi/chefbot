@@ -5,19 +5,17 @@ python-dotenv==1.0.1
 gunicorn==22.0.0
 
 # ─── IBM Watsonx.ai ───────────────────────────────────────────────────────────
-# 1.5.x lifted the pandas<2.2 cap — use >=1.5.14 to stay conflict-free
 ibm-watsonx-ai>=1.5.14
 
 # ─── RAG / Vector Store ───────────────────────────────────────────────────────
 chromadb==0.5.3
-sentence-transformers==3.0.1
+sentence-transformers>=2.7.0
 
 # ─── ML / Numerics ────────────────────────────────────────────────────────────
-torch==2.3.1
-numpy==1.26.4
-# pandas<2.4.0 satisfies ibm-watsonx-ai AND xarray>=2.2 constraints
+# torch: no hard pin — let pip resolve the correct wheel for the platform
+torch>=2.0.0
+numpy>=1.24.0
 pandas>=2.2.0,<2.4.0
 
 # ─── HTTP ─────────────────────────────────────────────────────────────────────
-# >=2.33.0 satisfies google-api-core constraint
 requests>=2.33.0
