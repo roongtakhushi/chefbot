@@ -14,7 +14,7 @@ load_dotenv()
 WATSONX_API_KEY = os.getenv("WATSONX_API_KEY", "")
 WATSONX_PROJECT_ID = os.getenv("WATSONX_PROJECT_ID", "")
 WATSONX_URL = os.getenv("WATSONX_URL", "https://eu-gb.ml.cloud.ibm.com")
-GRANITE_MODEL_ID = os.getenv("GRANITE_MODEL_ID", "ibm/granite-13b-instruct-v2")
+GRANITE_MODEL_ID = os.getenv("GRANITE_MODEL_ID", "mistralai/mistral-small-3-1-24b-instruct-2503")
 
 _model = None
 
@@ -31,8 +31,8 @@ def _get_model():
 
     creds = Credentials(url=WATSONX_URL, api_key=WATSONX_API_KEY)
     params = TextGenParameters(
-        max_new_tokens=1024,
-        min_new_tokens=50,
+        max_new_tokens=600,
+        min_new_tokens=30,
         temperature=0.7,
         top_p=0.9,
         top_k=50,
